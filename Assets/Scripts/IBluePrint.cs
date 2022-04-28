@@ -14,7 +14,7 @@ public abstract class IBluePrint : MonoBehaviour
     /// <param name="field">战场信息</param>
     /// <param name="position">武器在战场上的位置</param>
     /// <returns>武器</returns>
-    public abstract IWeapon CreateWeapon(BattleField field, Vector2Int position);
+    public abstract IWeapon CreateWeapon(BattleField field, Vector2 position);
 
     /// <summary>获取能量消耗</summary>
     public abstract uint GetEnergyCosts();

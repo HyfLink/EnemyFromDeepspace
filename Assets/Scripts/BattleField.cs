@@ -32,7 +32,7 @@ public class BattleField : MonoBehaviour
     [HideInInspector] protected uint energy;
 
     /// <summary>战场上武器的二维列表</summary>
-    [HideInInspector] protected List<List<IWeapon>> weapons;
+    [HideInInspector] protected List<IWeapon> weapons;
 
     /// <summary>生成武器的蓝图</summary>
     [HideInInspector] protected List<IBluePrint> bluePrints;
@@ -53,53 +53,26 @@ public class BattleField : MonoBehaviour
     // Update is called once per frame
     void Update() { }
 
-    /// <summary>将屏幕坐标转换为战场坐标</summary>
-    Vector2Int ConvertScreenPosToFieldPos(Vector2 screenPos)
+    void CreateWeapon(IBluePrint bluePrint, Vector2 position)
     {
+        // 判断战场上是否已经存在武器。
+        //      NoticeWeaponOccupied();
+        // 判断能量是否充足
+        //      NoticeEnergyNotEnough();
+        //
+        //      weapons.Add(bluePrint.CreateWeapon(this, position));
+
         throw new System.NotImplementedException();
-    }
-
-    /// <summary>将战场坐标转换为实际坐标</summary>
-    Vector3 ConvertFieldPosToWorldPos(Vector2Int fieldPos)
-    {
-        throw new System.NotImplementedException();
-    }
-
-    /// <summary>根据战场坐标获取武器</summary>
-    IWeapon GetWeapon(Vector2Int pos) => weapons[pos.y][pos.x];
-
-    /// <summary>根据战场坐标获取武器</summary>
-    IWeapon GetWeapon(int x, int y) => weapons[y][x];
-
-    void CreateWeapon(IBluePrint bluePrint, Vector2 screenPos)
-    {
-        // 获取战场坐标，判断战场上是否已经存在武器。
-        Vector2Int fieldPos = ConvertScreenPosToFieldPos(screenPos);
-        uint costs = bluePrint.GetEnergyCosts();
-
-        if (GetWeapon(fieldPos) != null) // 位置占用
-        {
-            NoticeWeaponOccupied(fieldPos);
-        }
-        else if (costs < Energy) // 能量不足
-        {
-            NoticeEnergyNotEnough(costs);
-        }
-        else
-        {
-            weapons[fieldPos.y][fieldPos.x] =
-                bluePrint.CreateWeapon(this, fieldPos);
-        }
     }
 
     /// <summary>提示当前位置已被占用</summary>
-    void NoticeWeaponOccupied(Vector2Int fieldPos)
+    void NoticeWeaponOccupied()
     {
         throw new System.NotImplementedException();
     }
 
     /// <summary>提示能量不足</summary>
-    void NoticeEnergyNotEnough(double costs)
+    void NoticeEnergyNotEnough()
     {
         throw new System.NotImplementedException();
     }
