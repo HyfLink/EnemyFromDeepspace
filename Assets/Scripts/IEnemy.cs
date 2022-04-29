@@ -2,10 +2,13 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class IEnemy : MonoBehaviour
+public abstract class IEnemy : MonoBehaviour
 {
     /// <summary>敌方在战场上的位置</summary>
     [HideInInspector] protected Vector2 position;
+
+    /// <summary>占有半径</summary>
+    [HideInInspector] protected double radius;
 
     /// <summary>敌方的生命值</summary>
     [HideInInspector] protected double health;
@@ -16,10 +19,14 @@ public class IEnemy : MonoBehaviour
     /// <summary>获取敌方在战场上的纵坐标</summary>
     public double Y { get => position.y; }
 
+    /// <summary>获取武器在战场上的坐标</summary>
+    public Vector2 Position { get => position; }
+
     /// <summary>获取敌方的生命值</summary>
     public double Health { get => health; }
 
-    public IEnemy(Vector2 pos) { position = pos; }
+    /// <summary>获取占有半径</summary>
+    public double Radius { get => radius; }
 
     /// <summary>判断敌方是否生存</summary>
     public virtual bool IsAlive() => health > 0;
@@ -27,9 +34,9 @@ public class IEnemy : MonoBehaviour
     /// <summary>对敌方造成 damage 伤害</summary>
     public virtual void UpdateHealth(double hp) => health -= hp;
 
-    // Start is called before the first frame update
-    void Start() { }
+    /// <summary>在敌人生成时调用</summary>
+    public abstract void OnEnemyCreate(BattleField filed);
 
-    // Update is called once per frame
-    void Update() { }
+    /// <summary>在敌人死亡时调用</summary>
+    public abstract void OnEnemyDestroy(BattleField filed);
 }

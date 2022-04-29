@@ -19,9 +19,6 @@ public abstract class IBluePrint : MonoBehaviour
     /// <summary>获取能量消耗</summary>
     public abstract uint GetEnergyCosts();
 
-    // Start is called before the first frame update
-    void Start() { }
-
-    // Update is called once per frame
-    void Update() { }
+    /// <summary>获取武器范围</summary>
+    public abstract double GetAreaRadius();
 }

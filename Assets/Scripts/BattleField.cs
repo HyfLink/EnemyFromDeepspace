@@ -31,8 +31,11 @@ public class BattleField : MonoBehaviour
     /// <summary>能量值</summary>
     [HideInInspector] protected uint energy;
 
-    /// <summary>战场上武器的二维列表</summary>
-    [HideInInspector] protected List<IWeapon> weapons;
+    /// <summary>武器列表</summary>
+    [HideInInspector] protected List<IWeapon> weaponList;
+
+    /// <summary>敌人列表</summary>
+    [HideInInspector] protected List<IEnemy> enemyList;
 
     /// <summary>生成武器的蓝图</summary>
     [HideInInspector] protected List<IBluePrint> bluePrints;
@@ -47,33 +50,96 @@ public class BattleField : MonoBehaviour
     /// <summary>获取当前能量值</summary>
     public uint Energy { get => energy; }
 
-    // Start is called before the first frame update
-    void Start() { }
-
-    // Update is called once per frame
-    void Update() { }
-
-    void CreateWeapon(IBluePrint bluePrint, Vector2 position)
+    /// <summary>检测武器和敌人是否死亡</summary>
+    void UpdateDeath()
     {
-        // 判断战场上是否已经存在武器。
-        //      NoticeWeaponOccupied();
-        // 判断能量是否充足
-        //      NoticeEnergyNotEnough();
-        //
-        //      weapons.Add(bluePrint.CreateWeapon(this, position));
+        // 删除死亡的武器器和敌人
+
+        weaponList.RemoveAll(weapon =>
+        {
+            if (!weapon.IsAlive())
+            {
+                weapon.OnWeaponDestroy(this);
+
+                throw new System.NotImplementedException();
+
+                return true;
+            }
+            return false;
+        });
+
+        enemyList.RemoveAll(enemy =>
+        {
+            if (!enemy.IsAlive())
+            {
+                enemy.OnEnemyDestroy(this);
+
+                throw new System.NotImplementedException();
+
+                return true;
+            }
+            return false;
+        });
+
+    }
+
+    /// <summary>
+    /// 在position位置创建武器。
+    /// </summary>
+    /// <param name="bluePrint"></param>
+    /// <param name="position"></param>
+    public void CreateWeapon(IBluePrint bluePrint, Vector2 position)
+    {
+        var costs = bluePrint.GetEnergyCosts();
+        var radius = bluePrint.GetAreaRadius();
+        var collision = CheckCollisionWithWeapons(position, radius);
+
+        if (costs > Energy)
+        {
+            // 判断能量是否充足
+            NoticeEnergyNotEnough();
+        }
+        else if (collision != null)
+        {
+            // 判断当前位置上是否已经存在武器
+            NoticeWeaponOccupied(collision);
+        }
+        else
+        {
+            // 创建武器
+            var weapon = bluePrint.CreateWeapon(this, position);
+            weapon.OnWeaponCreate(this);
+        }
 
         throw new System.NotImplementedException();
     }
 
     /// <summary>提示当前位置已被占用</summary>
-    void NoticeWeaponOccupied()
+    private void NoticeWeaponOccupied(IWeapon weapon)
     {
         throw new System.NotImplementedException();
     }
 
     /// <summary>提示能量不足</summary>
-    void NoticeEnergyNotEnough()
+    private void NoticeEnergyNotEnough()
     {
         throw new System.NotImplementedException();
+    }
+
+    /// <summary>
+    /// 判断以pos为圆心，radius为半径的圆是否与某个武器相交。
+    /// 若相交，返回该武器的引用，否则返回null。
+    /// </summary>
+    private IWeapon CheckCollisionWithWeapons(Vector2 pos, double radius)
+    {
+        foreach (var weapon in weaponList)
+        {
+            double minDistance = radius + weapon.Radius;
+            double realDistance = (pos - weapon.Position).magnitude;
+
+            if (realDistance < minDistance) { return weapon; }
+        }
+
+        return null;
     }
 }
