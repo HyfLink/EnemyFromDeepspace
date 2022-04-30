@@ -4,29 +4,23 @@ using UnityEngine;
 
 public abstract class IEntity : MonoBehaviour
 {
-    /// <summary>实体在战场上的位置</summary>
-    [HideInInspector] protected Vector2 position;
-
     /// <summary>占有半径</summary>
     [HideInInspector] protected double radius;
 
     /// <summary>实体的生命值</summary>
     [HideInInspector] protected double health;
 
-    /// <summary>获取实体在战场上的横坐标</summary>
-    public double X { get => position.x; }
-
-    /// <summary>获取实体在战场上的纵坐标</summary>
-    public double Y { get => position.y; }
-
-    /// <summary>获取实体在战场上的坐标</summary>
-    public Vector2 Position { get => position; }
-
     /// <summary>获取实体的生命值</summary>
     public double Health { get => health; }
 
     /// <summary>获取占有半径</summary>
     public double Radius { get => radius; }
+
+    public void Construct(double radius, double health)
+    {
+        this.radius = radius;
+        this.health = health;
+    }
 
     /// <summary>判断实体是否生存</summary>
     public virtual bool IsAlive() => health > 0;
