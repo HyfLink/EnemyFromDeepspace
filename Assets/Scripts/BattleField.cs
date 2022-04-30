@@ -50,37 +50,62 @@ public class BattleField : MonoBehaviour
     /// <summary>获取当前能量值</summary>
     public uint Energy { get => energy; }
 
-    /// <summary>检测武器和敌人是否死亡</summary>
-    void UpdateDeath()
+    /// <summary>武器、敌人帧更新</summary>
+    public void EntityFrameUpdate()
     {
-        // 删除死亡的武器器和敌人
+        // 检测武器和敌人是否死亡
+        // 死亡则移除，存活则更新。
 
-        weaponList.RemoveAll(weapon =>
+        bool update(IEntity entity)
         {
-            if (!weapon.IsAlive())
+            if (entity.IsAlive())
             {
-                weapon.OnWeaponDestroy(this);
-
-                throw new System.NotImplementedException();
-
+                entity.OnEntityFrameUpdate(this);
                 return true;
             }
-            return false;
-        });
-
-        enemyList.RemoveAll(enemy =>
-        {
-            if (!enemy.IsAlive())
+            else
             {
-                enemy.OnEnemyDestroy(this);
-
-                throw new System.NotImplementedException();
-
-                return true;
+                entity.OnEntityDestroy(this);
+                return false;
             }
-            return false;
-        });
+        }
 
+        weaponList.RemoveAll(update);
+        enemyList.RemoveAll(update);
+    }
+
+    /// <summary>武器、敌人秒更新</summary>
+    public void EntitySecondsUpdate()
+    {
+        weaponList.ForEach(weapon => weapon.OnEntitySecondsUpdate(this));
+        enemyList.ForEach(enemy => enemy.OnEntitySecondsUpdate(this));
+    }
+
+    /// <summary>生产能量</summary>
+    public void ProduceEnergy(uint produced)
+    {
+        this.energy += produced;
+
+        throw new System.NotImplementedException();
+    }
+
+    /// <summary>
+    /// 消耗能量，若能量不足，产生提示。
+    /// </summary>
+    public bool ConsumeEnergy(uint consumed)
+    {
+        if (energy < consumed)
+        {
+            NoticeEnergyNotEnough();
+            return false;
+        }
+        else
+        {
+            energy -= consumed;
+            return true;
+        }
+
+        throw new System.NotImplementedException();
     }
 
     /// <summary>
@@ -108,7 +133,7 @@ public class BattleField : MonoBehaviour
         {
             // 创建武器
             var weapon = bluePrint.CreateWeapon(this, position);
-            weapon.OnWeaponCreate(this);
+            weapon.OnEntityCreate(this);
         }
 
         throw new System.NotImplementedException();
@@ -134,6 +159,7 @@ public class BattleField : MonoBehaviour
     {
         foreach (var weapon in weaponList)
         {
+            // TODO optimize `sqrt`.
             double minDistance = radius + weapon.Radius;
             double realDistance = (pos - weapon.Position).magnitude;
 
