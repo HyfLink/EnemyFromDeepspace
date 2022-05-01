@@ -2,6 +2,4 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public abstract class IEnemy : IEntity
-{
-}
+public abstract class IEnemy : IEntity { }

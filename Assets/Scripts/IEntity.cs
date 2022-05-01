@@ -8,7 +8,7 @@ public abstract class IEntity : MonoBehaviour
     [HideInInspector] protected double radius;
 
     /// <summary>实体的生命值</summary>
-    [HideInInspector] protected double health;
+    [SerializeField] protected double health;
 
     /// <summary>获取实体的生命值</summary>
     public double Health { get => health; }
@@ -25,7 +25,7 @@ public abstract class IEntity : MonoBehaviour
     /// <summary>判断实体是否生存</summary>
     public virtual bool IsAlive() => health > 0;
 
-    /// <summary>对实体造成 damage 伤害</summary>
+    /// <summary>对实体造成 hp 伤害</summary>
     public virtual void UpdateHealth(double hp) => health -= hp;
 
     /// <summary>当实体生成时被调用</summary>

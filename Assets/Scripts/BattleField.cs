@@ -73,6 +73,7 @@ public class BattleField : MonoBehaviour
             else
             {
                 entity.OnEntityDestroy(this);
+                GameObject.Destroy(obj);
                 return true;
             }
         }
@@ -84,13 +85,15 @@ public class BattleField : MonoBehaviour
     /// <summary>武器、敌人秒更新</summary>
     public void EntitySecondsUpdate()
     {
-        void update(GameObject obj)
+        foreach (var weapon in weaponList)
         {
-            obj.GetComponent<IEntity>().OnEntitySecondsUpdate(this);
+            weapon.GetComponent<IWeapon>().OnEntitySecondsUpdate(this);
         }
 
-        weaponList.ForEach(update);
-        enemyList.ForEach(update);
+        foreach (var enemy in enemyList)
+        {
+            enemy.GetComponent<IEnemy>().OnEntitySecondsUpdate(this);
+        }
     }
 
     /// <summary>生产能量</summary>
@@ -123,11 +126,11 @@ public class BattleField : MonoBehaviour
     /// <summary>在position位置创建武器</summary>
     public void CreateWeapon(IBluePrint bluePrint, Vector3 position)
     {
-        var costs = bluePrint.GetEnergyCosts();
+        var energyCosts = bluePrint.GetEnergyCosts();
         var radius = bluePrint.GetAreaRadius();
         var collision = CheckCollisionWithWeapons(position, radius);
 
-        if (costs > Energy) // 判断能量是否充足
+        if (energyCosts > Energy) // 判断能量是否充足
         {
             NoticeEnergyNotEnough();
         }
@@ -137,13 +140,15 @@ public class BattleField : MonoBehaviour
         }
         else // 创建武器
         {
+            ConsumeEnergy(energyCosts);
+
             var rotation = Quaternion.identity;
-            var gameObject = Instantiate(bluePrint.prefab, position, rotation);
-            var weapon = gameObject.GetComponent<IWeapon>();
+            var gameObj = Instantiate(bluePrint.prefab, position, rotation);
+            var weapon = gameObj.GetComponent<IWeapon>();
             var health = bluePrint.GetInitialHealth();
             weapon.Construct(radius, health);
             weapon.OnEntityCreate(this);
-            weaponList.Add(gameObject);
+            weaponList.Add(gameObj);
         }
 
         throw new System.NotImplementedException();
@@ -167,10 +172,10 @@ public class BattleField : MonoBehaviour
     /// </summary>
     public IWeapon CheckCollisionWithWeapons(Vector3 pos, double radius)
     {
-        foreach (var gameObject in weaponList)
+        foreach (var gameObj in weaponList)
         {
-            var weapon = gameObject.GetComponent<IWeapon>();
-            var position = gameObject.GetComponent<Transform>().localPosition;
+            var weapon = gameObj.GetComponent<IWeapon>();
+            var position = gameObj.GetComponent<Transform>().localPosition;
 
             double minDistance = radius + weapon.Radius;
             double realDistance = (pos - position).magnitude;

@@ -2,24 +2,23 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-/// <summary>
-/// 武器：太阳能电池
-///     生产能量
-/// </summary>
-public sealed class SolarBatteryWeapon : IWeapon
+public class TempEnemy : IEnemy
 {
-    /// <summary>当武器生成时被调用</summary>
+    // Start is called before the first frame update
+    void Start() { }
+
+    // Update is called once per frame
+    void Update() { }
+
+    /// <summary>当实体生成时被调用</summary>
     public override void OnEntityCreate(BattleField field) { }
 
     /// <summary>每帧调用一次</summary>
     public override void OnEntityFrameUpdate(BattleField field) { }
 
     /// <summary>每秒调用一次</summary>
-    public override void OnEntitySecondsUpdate(BattleField field)
-    {
-        field.ProduceEnergy(5);
-    }
+    public override void OnEntitySecondsUpdate(BattleField field) { }
 
-    /// <summary>当武器生成时被销毁</summary>
+    /// <summary>当实体生成时被销毁</summary>
     public override void OnEntityDestroy(BattleField field) { }
 }

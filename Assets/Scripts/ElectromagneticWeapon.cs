@@ -22,6 +22,12 @@ public class ElectromagneticWeapon : IWeapon
     /// <summary>攻击半径</summary>
     private const double kAttackDistance = 50;
 
+    /// <summary>攻击伤害</summary>
+    private const double kAttackDamage = 10;
+
+    /// <summary>子弹速度</summary>
+    private const float kBulletSpeed = 3;
+
     /// <summary>当武器生成时被调用</summary>
     public override void OnEntityCreate(BattleField field) { }
 
@@ -34,15 +40,14 @@ public class ElectromagneticWeapon : IWeapon
         foreach (var enemy in field.EnemyList)
         {
             var enemyPos = enemy.GetComponent<Transform>().localPosition;
-            var weaponPos = this.GetComponentInParent<Transform>().localPosition;
-
+            var weaponPos = gameObject.GetComponent<Transform>().localPosition;
             var distance = Math.Abs((enemyPos - weaponPos).magnitude);
 
             if (distance < kAttackDistance)
             {
-                Instantiate(bulletPrefab)
-                    .GetComponent<DirectBullet>()
-                    .SetEnemy(enemy);
+                Instantiate(bulletPrefab, weaponPos, Quaternion.identity)
+                    .GetComponent<CommonBullet>()
+                    .Construct(enemy, kAttackDamage, kBulletSpeed);
                 break;
             }
         }
