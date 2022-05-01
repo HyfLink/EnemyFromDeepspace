@@ -100,8 +100,6 @@ public class BattleField : MonoBehaviour
     public void ProduceEnergy(uint produced)
     {
         this.energy += produced;
-
-        throw new System.NotImplementedException();
     }
 
     /// <summary>
@@ -119,8 +117,6 @@ public class BattleField : MonoBehaviour
             energy -= consumed;
             return true;
         }
-
-        throw new System.NotImplementedException();
     }
 
     /// <summary>在position位置创建武器</summary>
@@ -130,18 +126,14 @@ public class BattleField : MonoBehaviour
         var radius = bluePrint.GetAreaRadius();
         var collision = CheckCollisionWithWeapons(position, radius);
 
-        if (energyCosts > Energy) // 判断能量是否充足
+        // 1. 判断能量是否充足
+        // 2. 判断当前位置上是否已经存在武器
+        if (energyCosts > Energy)
         {
             NoticeEnergyNotEnough();
         }
-        else if (collision != null) // 判断当前位置上是否已经存在武器
+        else if (ConsumeEnergy(energyCosts))
         {
-            NoticeWeaponOccupied(collision);
-        }
-        else // 创建武器
-        {
-            ConsumeEnergy(energyCosts);
-
             var rotation = Quaternion.identity;
             var gameObj = Instantiate(bluePrint.prefab, position, rotation);
             var weapon = gameObj.GetComponent<IWeapon>();
@@ -157,12 +149,16 @@ public class BattleField : MonoBehaviour
     /// <summary>提示当前位置已被占用</summary>
     public void NoticeWeaponOccupied(IWeapon weapon)
     {
+        Debug.Log("NoticeWeaponOccupied " + weapon);
+
         throw new System.NotImplementedException();
     }
 
     /// <summary>提示能量不足</summary>
     public void NoticeEnergyNotEnough()
     {
+        Debug.Log("NoticeEnergyNotEnough");
+
         throw new System.NotImplementedException();
     }
 

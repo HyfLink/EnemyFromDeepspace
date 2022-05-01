@@ -10,27 +10,6 @@ using UnityEngine;
 /// </summary>
 public class ElectromagneticWeapon : IWeapon
 {
-    private class Bullet : IBullet
-    {
-        public override double GetDamage()
-        {
-            return 50;
-        }
-
-        public override Vector3 GetTranslation()
-        {
-            var dstPosition = target.GetComponent<Transform>().localPosition;
-            var srcPosition = gameObject.GetComponent<Transform>().localPosition;
-            return (dstPosition - srcPosition).normalized * Time.deltaTime * 3;
-        }
-    }
-
-    // Start is called before the first frame update
-    void Start() { }
-
-    // Update is called once per frame
-    void Update() { }
-
     /// <summary>子弹的预制体</summary>
     [SerializeField] private GameObject bulletPrefab;
 
@@ -55,9 +34,9 @@ public class ElectromagneticWeapon : IWeapon
             if (distance < kAttackDistance)
             {
                 Instantiate(bulletPrefab, weaponPos, Quaternion.identity)
-                    .GetComponent<Bullet>()
+                    .GetComponent<NormalBullet>()
                     .SetEnemy(enemy);
-                    
+
                 break;
             }
         }
